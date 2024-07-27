@@ -110,9 +110,55 @@ public class Model extends Observable {
         boolean changed;
         changed = false;
 
-        // TODO: Modify this.board (and perhaps this.score) to account
+        // Modify this.board (and perhaps this.score) to account
         // for the tilt to the Side SIDE. If the board changed, set the
         // changed local variable to true.
+
+        board.setViewingPerspective(side);
+
+        for (int col = 0; col < board.size(); col += 1){
+            for (int row = board.size() - 1; row >= 0; row -= 1){
+                Tile t1 = board.tile(col,row);
+                if (t1 == null){
+                    continue;
+                } else {
+                    for (int row2 = row - 1; row2 >= 0; row2 -= 1){
+                        Tile t2 = board.tile(col,row2);
+                        if (t2 == null){
+                            continue;
+                        } else {
+                            if (t1.value() == t2.value()){
+                                board.move(col,row,t2);
+                                score += 2 * t1.value();
+                                changed = true;
+                                break;
+                            } else {
+                                break;
+                            }
+                        }
+
+                    }
+                }
+            }
+        }
+
+        for (int col = 0; col < board.size(); col += 1){
+            for (int row = board.size() - 1; row >= 0 ; row -= 1){
+                Tile t1 = board.tile(col,row);
+                if (t1 == null){
+                    for (int row2 = row - 1; row2 >= 0; row2 -= 1){
+                        Tile t2 = board.tile(col,row2);
+                        if (t2 != null){
+                            board.move(col,row,t2);
+                            changed = true;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        board.setViewingPerspective(Side.NORTH);
 
         checkGameOver();
         if (changed) {
